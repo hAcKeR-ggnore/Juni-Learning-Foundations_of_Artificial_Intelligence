@@ -1,0 +1,42 @@
+# main.py
+
+class BankAccount:
+  def __init__(self, o, i):
+    self.owner = o
+    self.balance = 0
+    self.interest = i
+  def deposit(self, number):
+    self.balance += number
+  def withdraw(self, number):
+    if number > self.balance:
+      print("You do not have that much money to withdraw.")
+    else:
+      self.balance -= number
+  def calculate_interest(self):
+    self.balance = self.balance*self.interest + self.balance
+  def __str__(self):
+    return ("Owner: " + str(self.owner) + " | Balance: " + str(self.balance))
+  
+status = BankAccount("Naeem", 0.12)
+print(status.owner)
+print(status.balance)
+print(status.interest)
+
+print(" ")
+
+status.deposit(100)
+print("$" + str(status.balance))
+
+print(" ")
+
+status.withdraw(50)
+print("$" + str(status.balance))
+
+print(" ")
+
+status.calculate_interest()
+print("$" + str(status.balance))
+
+print(" ")
+
+print(status)
