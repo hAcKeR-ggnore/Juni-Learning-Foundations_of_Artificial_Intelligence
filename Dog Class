@@ -1,0 +1,59 @@
+# main.py
+import random
+
+class Dog:
+  def __init__(self, n, a, t):
+    self.name = n
+    self.age = a
+    self.tricks = t
+    self.sitting = False
+  def learn_trick(self, newTrick):
+    self.tricks.append(newTrick)
+    print(str(self.name) + " just learned " + str(newTrick) + ".")
+  def do_trick(self):
+    if len(self.tricks) == 0:
+      print(str(self.name) + " knows no tricks.")
+    else:
+      randomTrickNum = random.randint(0, len(self.tricks)-1)
+      print(str(self.name) + " just performed " + str(self.tricks[randomTrickNum] + "."))
+  def sit_down(self):
+    self.sitting = True
+    return self.sitting
+  def stand_up(self):
+    self.sitting = False
+    return self.sitting
+  def get_state(self):
+    if self.sitting == True:
+      print(str(self.name) + " is sitting down.")
+    else:
+      print(str(self.name) + " is standing up.")
+  def __str__(self):
+    if self.sitting == True:
+      return ("Name: " + str(self.name) + " | Age: " + str(self.age) + " | Tricks: " + str(self.tricks) + " | State: Sitting")
+    else:
+      return ("Name: " + str(self.name) + " | Age: " + str(self.age) + " | Tricks: " + str(self.tricks) + " | State: Standing")
+
+
+tac = Dog("Tac", 2, ["High Jump", "Roll"])
+print(tac.name)
+print(tac.age)
+print(*tac.tricks, sep = ", ")
+
+print(" ")
+
+tac.learn_trick("Sit")
+print(*tac.tricks, sep = ", ")
+
+print(" ")
+
+tac.do_trick()
+
+print(" ")
+
+tac.get_state()
+
+print(tac.sit_down())
+
+tac.get_state()
+
+print(tac)
