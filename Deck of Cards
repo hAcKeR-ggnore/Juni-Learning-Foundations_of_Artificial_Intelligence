@@ -1,0 +1,44 @@
+# main.py
+import random
+import re
+
+class Card:
+  def __init__(self, v, s):
+    self.value = v
+    self.suit = s
+  def __str__(self):
+    return (str(self.value) + " of " + str(self.suit))
+
+class Deck:
+  def __init__(self):
+    self.deck = []
+    suits = ["Spades", "Hearts", "Clovers", "Diamonds"]
+    cardValue = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Joker"]
+    for i in range(4):
+      for j in range(14):
+        card = Card(cardValue[j], suits[i])
+        self.deck.append(card)
+  def shuffle(self):
+    for i in range(len(self.deck)):
+      swapCard = random.randint(0, len(self.deck)-1)
+      temp = self.deck[i]
+      self.deck[i] = self.deck[swapCard]
+      self.deck[swapCard] = temp
+  def draw(self):
+    if len(self.deck) == 0:
+      print("There are no more cards.")
+    else:
+      return self.deck.pop(0)
+  def __str__(self):
+    v = ""
+    for i in self.deck:
+      v = v + str(i) + "\n"
+    return v
+
+deck = Deck()
+print(deck)
+print("---" + "\n")
+deck.shuffle()
+print(deck)
+print("---" + "\n")
+print("You drew " + str(deck.draw()))
