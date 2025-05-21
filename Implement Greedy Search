@@ -1,0 +1,52 @@
+# main.py
+import queue
+
+class Node:
+  def __init__(self, name):
+    self.name = name
+    self.neighbours = {}
+  def __lt__(self, other):
+    return self.name < other.name
+    
+#heuristic
+
+#A/B = 3
+#A/C = 5
+#A/E = 15
+#B/D = 2
+#B/E = 6
+
+class Graph:
+  def __init__(self, node):
+    self.root_node = node
+  def add_neighbour(self, node1, node2, weight):
+    node1.neighbours[node2] = weight
+    node2.neighbours[node1] = weight
+  def greedy_search(self, node):
+    visited = []
+    q = queue.PriorityQueue()
+    q.put((0 , node))
+    while not q.empty():
+      cost, node = q.get()
+      if node.name not in visited:
+        visited.append(node.name)
+        for child in node.neighbours:
+          q.put((node.neighbours[child], child))
+    return print(visited)
+        
+aNode = Node("A")
+bNode = Node("B")
+cNode = Node("C")
+dNode = Node("D")
+eNode = Node("E")
+
+
+graph = Graph(aNode)
+
+graph.add_neighbour(bNode, aNode, 3)
+graph.add_neighbour(cNode, aNode, 5)
+graph.add_neighbour(dNode, bNode, 2)
+graph.add_neighbour(eNode, bNode, 6)
+graph.add_neighbour(eNode, aNode, 15)
+
+graph.greedy_search(aNode)
