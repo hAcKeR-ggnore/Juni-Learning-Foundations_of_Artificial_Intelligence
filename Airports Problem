@@ -1,0 +1,69 @@
+# main.py
+
+class Node:
+  def __init__(self, n, s):
+    self.key = n
+    self.state = s
+    self.neighbours = {}
+  def add_neighbour(self, x, y):
+    self.neighbours[x.key] = y
+  def __str__(self):
+    s = ("ID: " + str(self.key) + "\nState: " + str(self.state) + "\nNeighbours: ")
+    if len(self.neighbours) == 0:
+      s += "None"
+    for i in self.neighbours:
+      s += str(i) + ":" + str(self.neighbours[i]) + " "
+    return s
+
+class Graph:
+  def __init__(self):
+    self.nodes = {}
+  def add_node(self, node):
+    self.nodes[node.key] = node
+  def add_edge(self, node1, node2, weight):
+    if not node1.key in self.nodes or not node2.key in self.nodes:
+      print("One of your nodes is not in the graph.")
+    else:
+      node1.add_neighbour(node2, weight)
+  def __str__(self):
+    s = ""
+    for i in self.nodes:
+      s += "\n\n" + self.nodes[i].__str__() 
+    return s
+  def manual_search(self, start, end):
+    currentNode = start
+    timeTaken = 0
+    while currentNode != end:
+      print("You are in " + str(currentNode.state) + ". Here are the available flights and their travel times:")
+      for i in currentNode.neighbours:
+        print("City: " + str(self.nodes[i].state) + " | Time: " + str(currentNode.neighbours[i]) + " | Key: " + str(i))
+      answer = ""
+      while answer not in self.nodes:
+        answer = input("Type in the key of the place you would like to go: ")
+      timeTaken += currentNode.neighbours[answer]
+      currentNode = self.nodes[answer]
+    print("You made it to " + str(currentNode.state) + ". It took you " + str(timeTaken) + " hours.")
+
+graph = Graph()
+boston = Node("Bo", "Boston")
+newYork = Node("NY", "New York")
+washDC = Node("D.C", "Washington D.C")
+sanFran = Node("SF", "San Francisco")
+seattle = Node("Se", "Seattle")
+losAng = Node("LA", "Los Angeles")
+
+graph.add_node(boston)
+graph.add_node(newYork)
+graph.add_node(washDC)
+graph.add_node(sanFran)
+graph.add_node(seattle)
+graph.add_node(losAng)
+
+graph.add_edge(boston, washDC, 2)
+graph.add_edge(boston, newYork, 1)
+graph.add_edge(newYork, sanFran, 6)
+graph.add_edge(washDC, seattle, 7)
+graph.add_edge(seattle, sanFran, 3)
+graph.add_edge(sanFran, losAng, 1)
+
+graph.manual_search(boston, losAng)
