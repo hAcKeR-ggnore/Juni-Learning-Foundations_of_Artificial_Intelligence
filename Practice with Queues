@@ -1,0 +1,49 @@
+# main.py
+
+queue1 = []
+for i in range(1,11):
+  queue1.append(i)
+
+while len(queue1) != 0:
+  print(queue1.pop(0))
+  
+print("\n--------")
+
+def getEvens(queue):
+  evenEndings = ["2", "4", "6", "8", "0"]
+  alyst = []
+  for x, i in enumerate(queue):
+    if i in evenEndings or i[-1] in evenEndings:
+      alyst.append(queue[x])
+  return print("\n" + str(alyst))
+
+def getEvens2(queue):
+  alyst2 = []
+  while len(queue) != 0:
+    num = queue.pop(0)
+    if num%2 == 0:
+      alyst2.append(num)
+  return print("\n" + str(alyst2))
+  
+#for o in evenEndings:
+      #if o in i[len(i)-1] or o == i:
+        #alyst.append(queue.pop(int(i)))
+
+queue2 = ["1", "2", "6", "5", "4", "6", "10", "210"]
+queue3 = [1, 2, 6, 5, 4, 6, 10, 210]
+getEvens(queue2)
+getEvens2(queue3)
+
+print("\n--------")
+
+def buildQueueString(x):
+  stri = ""
+  alyst3 = []
+  for i in x:
+    if i == "*":
+      stri += alyst3.pop(0)
+    else:
+      alyst3.append(i)
+  return print("\n" + stri)
+
+buildQueueString("H*ELL**O**")
