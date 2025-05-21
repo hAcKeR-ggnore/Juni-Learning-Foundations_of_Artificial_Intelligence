@@ -1,0 +1,64 @@
+# main.py
+
+numberStack = []
+
+for x in range(1, 11):
+  numberStack.append(x)
+
+while len(numberStack) != 0:
+  print(numberStack.pop())
+  
+print("\n---------")
+
+def isPalindrome(string):
+  initial = str(string)
+  #reverse = str(string[::-1])
+  alyst = []
+  reverse = []
+  for i in initial:
+    alyst.append(i)
+  for i in range(len(alyst)):
+    reverse.append(alyst.pop())
+  space = ''
+  reverse = space.join(reverse)
+  if reverse == initial:
+    return print("True")
+  else:
+    return print("False")
+
+def isPalindrome2(string):
+  stack = []
+  for letter in string:
+    stack.append(letter)
+  for letter in string:
+    if letter != stack.pop():
+      return print("False")
+  return print("True")
+
+print("")
+isPalindrome("racecar")
+isPalindrome2("racecar")
+
+print("\n---------")
+
+def evaluateExpression(RpolishNotation):
+  stack = []
+  operators = ['+', '-', '/', '*']
+  alyst = RpolishNotation.split()
+  for i in alyst:
+    if i not in operators:
+      stack.append(int(i))
+    else:
+      number1 = stack.pop()
+      number2 = stack.pop()
+      if i == '+':
+        stack.append(number1+number2)
+      elif i == '-':
+        stack.append(number2-number1)
+      elif i == '/':
+        stack.append(number2/number1)
+      else:
+        stack.append(number1*number2)
+  return print(stack.pop())
+  
+evaluateExpression("6 2 / 3 + 4 *")
