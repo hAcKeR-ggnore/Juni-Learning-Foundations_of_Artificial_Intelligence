@@ -1,0 +1,108 @@
+# main.py
+import random
+import queue
+
+#1 | Fill 3L
+#2 | Fill 5L
+#3 | Empty 3L
+#4 | Empty 5L
+#5 | Pour 3L --> 5L
+#6 | Pour 5L --> 3L
+
+#5L = 4L (End Goal)
+
+#Heuristic GS, Closer to 4L Combined = Higher Value (0)
+#4 - (5L+3L)
+#Return 1
+
+class Node:
+  def __init__(self, value3, value5):
+    self.state = (value3, value5)
+    self.neighbours = []
+  def generate_neighbours(self):
+    self.neighbours.append(Node(3, self.state[1]))
+    self.neighbours.append(Node(self.state[0], 5))
+    self.neighbours.append(Node(0, self.state[1]))
+    self.neighbours.append(Node(self.state[0], 0))
+    add = self.state[0]+self.state[1]
+    if add <= 5:
+      self.neighbours.append(Node(0, add))
+    else:
+      subFive = 5-self.state[1]
+      self.neighbours.append(Node(self.state[0]-subFive, 5))
+    if add <= 3:
+      self.neighbours.append(Node(add, 0))
+    else:
+      subThree = 3-self.state[0]
+      self.neighbours.append(Node(3, self.state[1]-subThree))
+  def get_heuristic(self):
+    score = None
+    if self.state[1] == 4:
+      score = 0
+    elif self.state[1]+self.state[0] == 4:
+      score = 1
+    else:
+      hold = self.state[1]+self.state[0]
+      score = abs(4-hold)
+    return score
+  def __eq__(self, other):
+    return self.__class__ == other.__class__ and self.state == other.state
+  def __lt__(self, other):
+    return self.state < other.state
+  #change string of both jug values to an int
+  def __hash__(self): 
+    return int(str(self.state[0])+str(self.state[1]))
+  def __str__(self):
+    return ("3L Jug has " + str(self.state[0]) + " in it.") + (" 5L Jug has " + str(self.state[1]) + " in it.")
+    
+  
+class Solve:
+  def __init__(self, rootNode):
+    self.rootNode = rootNode #Node Object
+  def greedy_solve(self):
+    visited = []
+    q = queue.PriorityQueue()
+    q.put((self.rootNode.get_heuristic(), self.rootNode, [self.rootNode]))
+    count = 0
+    while not q.empty():
+      score, node, track = q.get()
+      node.generate_neighbours()
+      if node not in visited:
+        count += 1
+        if score == 0:
+          return track, count
+        visited.append(node)
+        for child in node.neighbours:
+          q.put((child.get_heuristic(), child, track+[child]))
+  def alpha_star_solve(self):
+    #depth+heuristic
+    #(Total, Depth, Node, Path)
+    visited = set()
+    q = queue.PriorityQueue()
+    q.put((self.rootNode.get_heuristic(), 0, self.rootNode, [self.rootNode]))
+    count = 0
+    while not q.empty():
+      heuristic, depth, node, path = q.get()
+      node.generate_neighbours()
+      if node not in visited:
+        visited.add(node)
+        count += 1
+        if node.get_heuristic() == 0:
+          return path, count
+        for child in node.neighbours:
+          if child not in visited:
+            q.put((depth+child.get_heuristic(), depth+1, child, [child]))
+randomValue = random.randint(1, 5)
+
+start = Node(1, 1)
+graph = Solve(start)
+
+path, count = graph.greedy_solve()
+print(count)
+for node in path:
+  print(node)
+  
+pathe, kount = graph.alpha_star_solve()
+print(kount)
+for node in path:
+  print(node)
