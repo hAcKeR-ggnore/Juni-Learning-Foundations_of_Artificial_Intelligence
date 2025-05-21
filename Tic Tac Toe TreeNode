@@ -1,0 +1,82 @@
+# main.py
+
+class TreeNode:
+  def __init__(self, playerCharacter, board):
+    self.board = board
+    self.character = playerCharacter
+    self.branches = []
+  def add_branch(self, node):
+    self.branches.append(node)
+  def print_board(self):
+    if self.board != []:
+      print("  0 1 2\n")
+      k = 0
+      for i in self.board:
+        print(str(k) + " " + str(" ".join(i)) + "\n")
+        k += 1
+      return
+  def check_win(self):
+    #Horizontal
+    for rowNum in range(3):
+      if self.board[rowNum][0] == self.board[rowNum][1] == self.board[rowNum][2] and self.board[rowNum][0] != "-":
+        return (self.board[rowNum][0], True, "Row")
+    #Vertical
+    for colNum in range(3):
+      if self.board[0][colNum] == self.board[1][colNum] == self.board[2][colNum] and self.board[0][colNum] != "-":
+        return (self.board[0][colNum], True, "Column")
+    #Diagnol
+    if self.board[0][0] == self.board[1][1] == self.board[2][2] and self.board[0][0] != "-":
+      return (self.board[0][0], True, "Diagnol Left")
+    elif self.board[0][2] == self.board[1][1] == self.board[2][0] and self.board[2][0] != "-":
+      return (self.board[2][0], True, "Diagnol Right")
+    #Draw
+    spaceNum = 0
+    for i in self.board:
+      for x in i:
+        if x != "-":
+          spaceNum += 1
+    if spaceNum == 9:
+      return ("Draw")
+    return ("Not Finished")
+  """def alt_print(self):
+    #inputline[1 5 & 9] is where X or O should be (Columns)
+    #grid[0, 2, 4] are the rows
+    inputline = [" ", " ", " ", "|", " ", " ", " ", "|", " ", " ", " "]
+    borderline = ["-", "-", "-", "+", "-", "-", "-", "+", "-", "-", "-"]
+    for _ in range(2):
+      self.board.append("".join(inputline))
+      self.board.append("".join(borderline))
+    self.board.append("".join(inputline))
+    for _ in range(7):
+      print("\n")
+    for i in self.board:
+      print("                          " + str(i))"""
+  """def start(self, playerCharacter):
+    computerChar = ""
+    if playerCharacter == "X":
+      computerChar = "O"
+    elif playerCharacter == "O":
+      computerChar = "X"""
+    
+    
+start_board = [
+  ['-', '-', '-'],
+  ['-', '-', '-'],
+  ['-', '-', '-']
+]
+
+child_board = [
+  ['-', '-', '-'],
+  ['-', 'X', '-'],
+  ['-', '-', '-']
+]
+
+win_board = [
+  ['X', 'X', 'O'],
+  ['O', 'O', 'X'],
+  ['X', 'O', '-']
+]
+
+g = TreeNode("X", win_board)
+g.print_board()
+print(g.check_win())
