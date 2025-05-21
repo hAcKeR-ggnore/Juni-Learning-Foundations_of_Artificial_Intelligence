@@ -1,0 +1,42 @@
+# main.py
+
+#Graph Class & Node Class
+#Node class is identification and neighbours
+#Graph class adds nodes to graph to do DLS
+
+class Node:
+  def __init__(self, name):
+    self.node = name
+    self.neighbours = []
+  def add_neighbour(self, inputNode):
+    self.neighbours.append(inputNode)
+
+class Graph:
+  def __init__(self, node, depth):
+    self.initialNode = node
+    self.depth = depth
+  def dls(self):
+    visitedNodes = []
+    visitedNodes.append(self.initialNode.node)
+    stack = [(self.initialNode, self.depth)]
+    while len(stack) != 0:
+      rootNode, node_depth = stack.pop()
+      print (f"{rootNode.node}, {node_depth}")
+      for node in rootNode.neighbours:
+        if node not in visitedNodes:
+          visitedNodes.append(node)
+          stack.append((node, node_depth+1))
+
+aNode = Node("A")
+bNode = Node("B")
+cNode = Node("C")
+dNode = Node("D")
+eNode = Node("E")
+aNode.add_neighbour(bNode)
+aNode.add_neighbour(cNode)
+bNode.add_neighbour(dNode)
+cNode.add_neighbour(eNode)
+dNode.add_neighbour(eNode)
+
+graph = Graph(aNode, 0)
+graph.dls()
