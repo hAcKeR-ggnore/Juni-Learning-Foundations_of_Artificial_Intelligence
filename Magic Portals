@@ -1,0 +1,80 @@
+# main.py
+
+class Node:
+  def __init__(self, n):
+    self.node = n
+    self.neighbours = []
+  def add_neighbour(self, x):
+    self.neighbours.append(x)
+  def __str__(self):
+    if len(self.neighbours) > 2:
+      temp = ", ".join(map(str, self.neighbours[0:len(self.neighbours)-1]))
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: " + temp + ", and " + str(self.neighbours[len(self.neighbours)-1]))
+    elif len(self.neighbours) == 2:
+      temp = (str(self.neighbours[0]))
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: "  + temp + " and " + str(self.neighbours[len(self.neighbours)-1]))
+    elif len(self.neighbours) == 1:
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: " + str(self.neighbours[0]))
+    else:
+      return str("Node(s): " + str(self.node) + str("\nNeighbours/Edges: None"))
+
+class MapGraph:
+  def __init__(self):
+    self.graph = {}
+  def add_node(self, userNode):
+    self.graph[userNode.node] = userNode
+  def add_edge(self, node1, node2):
+    if node1.node in self.graph and node2.node in self.graph:
+      node1.add_neighbour(node2)
+      node2.add_neighbour(node1)
+    else:
+      print("One of your nodes is not inside the graph.")
+  def __str__(self):
+    s = ""
+    for i in self.graph:
+      s += str(self.graph[i].__str__()) + "\n\n"
+    return s
+  def get_min_num_portals(self, startingNode, endNode):
+    visited = {startingNode}
+    queue = [(startingNode, 0)]
+    if startingNode.node not in self.graph and endNode.node not in self.graph:
+      print("One of these portals does not exist.")
+    else:
+      while len(queue) != 0:
+        temp = queue.pop(0)
+        node = temp[0]
+        counter = temp[1] 
+        if node == endNode:
+          return print(counter)
+        else:
+          for i in node.neighbours:
+            if i not in visited:
+              visited.add(i)
+              queue.append((i, counter+1))
+
+g = MapGraph()
+NY = Node("NY")
+DC = Node("DC")
+SF = Node("SF")
+P = Node("P")
+L = Node("L")
+T = Node("T")
+D = Node("D")
+
+g.add_node(NY)
+g.add_node(DC)
+g.add_node(SF)
+g.add_node(P)
+g.add_node(L)
+g.add_node(T)
+g.add_node(D)
+
+g.add_edge(NY, DC)
+g.add_edge(NY, SF)
+g.add_edge(DC, SF)
+g.add_edge(DC, P)
+g.add_edge(DC, L)
+g.add_edge(SF, T)
+g.add_edge(SF, D)
+g.add_edge(P, L)
+g.add_edge(T, D)
