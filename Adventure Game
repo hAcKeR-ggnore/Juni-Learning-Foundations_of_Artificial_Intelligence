@@ -1,0 +1,72 @@
+# main.py
+
+class Node:
+  def __init__(self, n, pr):
+    self.node = n
+    self.prompt = pr
+    self.neighbours = []
+  def add_neighbour(self, x):
+    self.neighbours.append(x)
+  def __str__(self):
+    if len(self.neighbours) > 2:
+      temp = ", ".join(map(str, self.neighbours[0:len(self.neighbours)-1]))
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: " + temp + ", and " + str(self.neighbours[len(self.neighbours)-1]))
+    elif len(self.neighbours) == 2:
+      temp = (str(self.neighbours[0]))
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: "  + temp + " and " + str(self.neighbours[len(self.neighbours)-1]))
+    elif len(self.neighbours) == 1:
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: " + str(self.neighbours[0]))
+    else:
+      return str("Node(s): " + str(self.node) + str("\nNeighbours/Edges: None"))
+      
+class Graph:
+  def __init__(self):
+    self.graph = {}
+  def add_node(self, n):
+    self.graph[n.node] = n
+  def add_edge(self, x, y):
+    if x.node in self.graph and y.node in self.graph:
+      x.add_neighbour(y)
+    else:
+      print("One of your nodes is not in the graph")
+  def __str__(self):
+    s = ""
+    for i in self.graph:
+      s += str(self.graph[i].__str__()) + "\n\n"
+    return s
+  def start_adventure(self, n):
+    while len(n.neighbours) > 0:
+      answer = input(str(n.prompt))
+      n = self.graph[answer]
+    print(n.prompt)
+    
+start = Node("start", "You find yourself in an abandoned theme park. Do you want to *leave* or *explore*?")
+leavePark = Node("leave", "You decided to leave the park and go home.")
+explorePark = Node("explore", "You walk around until you hear a scary noise. Do you *run away* or *check it out*?")
+runAway = Node("run away", "You got spooked and decided to run away from the noise. The theme park is too scary! You decide you want to go home.")
+checkItOut = Node("check it out", "You decide to go see what the noise is. You hear a meow and realize it was just a cat that's exploring the park too")
+
+# build the tree for your game
+g = Graph()
+g.add_node(start)
+g.add_node(leavePark)
+g.add_node(explorePark)
+g.add_node(runAway)
+g.add_node(checkItOut)
+
+g.add_edge(start, leavePark)
+g.add_edge(start, explorePark)
+g.add_edge(explorePark, runAway)
+g.add_edge(explorePark, checkItOut)
+print(g)
+g.start_adventure(start)
+
+#for i in x:
+  #start = input("You find yourself at a " + str(self.startingNode) + ". Would you like to -leave- or -explore-")
+  #if start == "Leave" or start == "leave":
+    #break
+  #elif start == "Explore" or start == "explore"
+    #pass
+  #else:
+    #print("You must type Leave/leave or Explore/explore!")
+    #start_adventure()
