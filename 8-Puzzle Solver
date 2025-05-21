@@ -1,0 +1,115 @@
+# main.py
+import copy
+import queue
+
+class Node:
+  def __init__(self, state):
+    self.board = state
+    self.neighbours = []
+  def generate_neighbours(self):
+    for i in range(len(self.board)):
+      for j in range(len(self.board[i])):
+        if " " == self.board[i][j]:
+          coordinate = (i, j)
+          break
+    #Left = [i, j-1], Right = [i, j+1], Up = [i-1, j], Down = [i+1, j]
+    directions = [(0, -1) , (0, 1), (-1, 0), (1, 0)]
+    for r, c in directions:
+      newBoard = copy.deepcopy(self.board)
+      nuR, nuC = coordinate
+      if nuR+r < 3 and nuR+r > -1 and nuC+c < 3 and nuC+c > -1:
+        newBoard[nuR][nuC] = newBoard[nuR+r][nuC+c]
+        newBoard[nuR+r][nuC+c] = " "
+        child = Node(newBoard)
+        self.neighbours.append(child)
+  def hueristic(self):
+    location = {"1": (0, 0), "2": (0, 1), "3": (0, 2), "4": (1, 0), "5": (1, 1), "6": (1, 2), "7": (2, 0), "8": (2, 1), " ": (2, 2)}
+    score = 0
+    for row in range(3):
+      for col in range(3):
+        coordinate = location[self.board[row][col]]
+        sum_X = abs(row - coordinate[0])
+        sum_Y = abs(col - coordinate[1])
+        score += sum_X+sum_Y
+    return score
+  def is_solved(self):
+    goal_board = [["1", "2", "3"], ["4", "5", "6"], ["7", "8", " "]]
+    if self.board == goal_board:
+      return True
+    else:
+      return False
+  def __str__(self):
+    s = ""
+    for row in self.board:
+      for column in row:
+        s += column+" "
+      s += "\n"
+    return s
+  def __eq__(self, other):
+    return self.__class__ == other.__class__ and self.board == other.board
+  def __lt__(self, other):
+    return self.board < other.board
+  def __hash__(self):
+    total = ''
+    for row in self.board:
+      for space in row:
+        if space != " ":
+          total += space
+        else:
+          total += '0'
+    return int(total)
+        
+
+class puzzleGraph:
+  def __init__(self, board):
+    self.root = board
+  def bfs(self):
+    visited = {self.root}
+    queue = [(self.root, [self.root])]
+    count = 0
+    while len(queue) != 0: 
+      node, path = queue.pop(0)
+      print(node)
+      node.generate_neighbours()
+      count += 1
+      if node.is_solved() == True:
+        return path, count
+      for child in node.neighbours:
+        if child not in visited:
+          visited.add(child)
+          queue.append((child, path+[child]))
+  def alpha_star(self):
+    visited = set()
+    q = queue.PriorityQueue()
+    #(Hueristic+Depth, Depth, Node, Path)
+    q.put((self.root.hueristic(), 0, self.root, [self.root]))
+    count = 0
+    while not q.empty():
+      weight, depth, node, path = q.get()
+      if node.is_solved() == True:
+        return path, count
+      node.generate_neighbours()
+      if node not in visited:
+        visited.add(node)
+        count += 1
+        for child in node.neighbours:
+          if child not in visited:
+            depth += 1
+            q.put((child.hueristic()+depth, depth, child, path+[child]))
+
+
+
+graph = [["1", " ", "3"], ["4", "7", "6"], ["5", "2", "8"]]
+start = Node(graph)
+puzzle = puzzleGraph(start)
+
+path, count = puzzle.bfs()
+for node in path:
+  print(node)
+print(str(count) + "\n")
+
+
+path, count = puzzle.alpha_star()
+for node in path:
+  print(node)
+print(str(count) + "\n")
