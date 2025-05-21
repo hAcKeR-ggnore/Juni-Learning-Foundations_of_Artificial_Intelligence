@@ -1,0 +1,94 @@
+# main.py
+
+class Node:
+  def __init__(self, n):
+    self.node = n
+    self.neighbours = []
+  def add_neighbour(self, x):
+    self.neighbours.append(x)
+  def __str__(self):
+    if len(self.neighbours) > 2:
+      temp = ", ".join(map(str, self.neighbours[0:len(self.neighbours)-1]))
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: " + temp + ", and " + str(self.neighbours[len(self.neighbours)-1]))
+    elif len(self.neighbours) == 2:
+      temp = (str(self.neighbours[0]))
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: "  + temp + " and " + str(self.neighbours[len(self.neighbours)-1]))
+    elif len(self.neighbours) == 1:
+      return str("Node(s): " + str(self.node)) + str("\nNeighbours/Edges: " + str(self.neighbours[0]))
+    else:
+      return str("Node(s): " + str(self.node) + str("\nNeighbours/Edges: None"))
+
+class Graph:
+  def __init__(self):
+    self.graph = {}
+  def add_node(self, userNode):
+    self.graph[userNode.node] = userNode
+  def add_edge(self, node1, node2):
+    if node1.node in self.graph and node2.node in self.graph:
+      node1.add_neighbour(node2)
+      node2.add_neighbour(node1)
+    else:
+      print("One of your nodes is not inside the graph.")
+  def __str__(self):
+    s = ""
+    for i in self.graph:
+      s += str(self.graph[i].__str__()) + "\n\n"
+    return s
+  def groupCount(self):
+    num = 0
+    visited = set()
+    for x in self.graph.values():
+      if x not in visited:
+        num += 1
+        visited.add(x)
+      stack = [x]
+      while len(stack) != 0:
+        temp = stack.pop()
+        for y in temp.neighbours:
+          if y not in visited:
+            visited.add(y)
+            stack.append(y)
+    return num
+    
+g1 = Graph()
+a1 = Node("a")
+b1 = Node("b")
+c1 = Node("c")
+d1 = Node("d")
+e1 = Node("e")
+
+g1.add_node(a1)
+g1.add_node(b1)
+g1.add_node(c1)
+g1.add_node(d1)
+g1.add_node(e1)
+
+g1.add_edge(a1, b1)
+g1.add_edge(a1, c1)
+g1.add_edge(b1, d1)
+g1.add_edge(b1, c1)
+g1.add_edge(d1, e1)
+
+# construct graph with three groups of friends
+g2 = Graph()
+a2 = Node("a")
+b2 = Node("b")
+c2 = Node("c")
+d2 = Node("d")
+e2 = Node("e")
+f2 = Node("f")
+
+g2.add_node(a2)
+g2.add_node(b2)
+g2.add_node(c2)
+g2.add_node(d2)
+g2.add_node(e2)
+g2.add_node(f2)
+
+g2.add_edge(a2, b2)
+g2.add_edge(a2, c2)
+g2.add_edge(d2, f2)
+
+# test the count_groups() method
+print(g1.groupCount()) # return 1
+print(g2.groupCount()) # retuns 3
