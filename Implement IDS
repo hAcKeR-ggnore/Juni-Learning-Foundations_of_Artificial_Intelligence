@@ -1,0 +1,44 @@
+# main.py
+
+class Node:
+  def __init__(self, name):
+    self.node = name
+    self.neighbours = []
+  def add_neighbour(self, inputNode):
+    self.neighbours.append(inputNode)
+    
+class Graph:
+  def __init__(self, node):
+    self.initialNode = node
+  def recurse(self, maxDepth):
+    for i in range(maxDepth+1):
+      self.ids(i)
+  def ids(self, maxDepth):
+    visitedNodes = []
+    depth = 0
+    stack = []
+    stack.append((self.initialNode, 0))
+    visitedNodes.append(self.initialNode)
+    while len(stack) != 0:
+      node, depth2 = stack.pop()
+      print(node.node)
+      for child in node.neighbours:
+        #print(child)
+        #print(child.neighbours)
+        if child.node not in visitedNodes and depth2 <= maxDepth:
+          stack.append((child, depth+1))
+          visitedNodes.append(node.node)
+
+aNode = Node("A")
+bNode = Node("B")
+cNode = Node("C")
+dNode = Node("D")
+eNode = Node("E")
+aNode.add_neighbour(bNode)
+aNode.add_neighbour(cNode)
+bNode.add_neighbour(dNode)
+cNode.add_neighbour(eNode)
+dNode.add_neighbour(eNode)
+
+graph = Graph(aNode)
+graph.ids(3)
