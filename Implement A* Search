@@ -1,0 +1,51 @@
+# main.py
+import queue
+
+#f = depth+cost
+#weight + (3-depth)
+#A C D E B
+
+class Node:
+  def __init__(self, name):
+    self.name = name
+    self.neighbours = {}
+  def add_neighbour(self, node, weight):
+    self.neighbours[node] = weight
+  def __lt__(self, other):
+    return self.name < other.name
+  
+class Graph:
+  def __init__(self, root):
+    self.root_node = root
+  def add_edge(self, node1, node2, weight):
+    node1.neighbours[node2] = weight
+    node2.neighbours[node1] = weight
+  def a_star_search(self):
+    visited = []
+    q = queue.PriorityQueue()
+    #(Evaluated, Cost, Weight, Node)
+    q.put((0, 0, 0, self.root_node))
+    while not q.empty():
+      evalCost, rawCost, depth, node = q.get()
+      if node.name not in visited:
+        visited.append(node.name)
+        for child in node.neighbours:
+          evaluated = node.neighbours[child] 
+          q.put((3-depth+1+evaluated, node.neighbours[child], depth+1, child))
+    return visited
+    
+aNode = Node("A")
+bNode = Node("B")
+cNode = Node("C")
+dNode = Node("D")
+eNode = Node("E")
+
+graph = Graph(aNode)
+
+graph.add_edge(aNode, bNode, 2)
+graph.add_edge(aNode, cNode, 1)
+graph.add_edge(bNode, eNode, 3)
+graph.add_edge(cNode, dNode, 1)
+graph.add_edge(eNode, dNode, 1)
+
+print(graph.a_star_search())
