@@ -1,0 +1,42 @@
+# main.py
+import random
+import queue
+
+class Node:
+  def __init__(self, name, weight):
+    self.holder = (weight, name)
+    self.neighbours = []
+  def add_neighbour(self, node, weight):
+    self.neighbours.append((node, weight))
+  def add_weightedEdge(self, node1, node2, weight):
+    pass
+  
+class Graph:
+  def __init__(self, rootNode):
+    self.root = rootNode
+  def ucs(self):
+    visited = []
+    Q = queue.PriorityQueue()
+    currentNode1 = self.root
+    Q.put((currentNode1.holder[0], currentNode1))
+    while not Q.empty():
+      currentWeight, currentNode = Q.get()
+      if currentNode not in visited:
+        visited.append(currentNode)
+        print(str(currentNode.holder[1]) + " costed: " + str(currentWeight))
+        for child in currentNode.neighbours:
+          childWeightSum = (child[1]+currentWeight)
+          Q.put((childWeightSum, child[0]))
+
+A = Node("A", 0)
+B = Node("B", 3)
+C = Node("C", 5)
+D = Node("D", 1)
+E = Node("E", 15)
+A.add_neighbour(B, 3)
+A.add_neighbour(C, 5)
+A.add_neighbour(E, 15)
+B.add_neighbour(D, 1)
+B.add_neighbour(E, 6)
+graph = Graph(A)
+graph.ucs()
