@@ -1,0 +1,63 @@
+# main.py
+import random
+
+class TreeNode:
+  def __init__(self, sum_of_marbles):
+    self.marbleCount = sum_of_marbles
+    self.childNodes = []
+  def add_childNode(self, node):
+    self.childNodes.append(node)
+  
+class Tree:
+  def __init__(self, rootNode):
+    self.startingNode = rootNode
+    self.build_Tree(self.startingNode)
+  def build_Tree(self, inputNode):
+    if inputNode.marbleCount <= 0:
+      return
+    possibleStates = []
+    for j in range(1, 4):
+      if j <= inputNode.marbleCount:
+        possibleStates.append(inputNode.marbleCount-j)
+    for i in possibleStates:
+      child = TreeNode(i)
+      inputNode.childNodes.append(child)
+    for child in inputNode.childNodes:
+      self.build_Tree(child)
+  def play_game(self):
+    print("Welcome to the Marble Game!")
+    print("In this game, you have a pile of X marbles and players must take turns picking up marbles.")
+    print("During your turn, you can pick up 1, 2, or 3 marbles.")
+    print("A player wins if the opponent doesn't have marbles to pick up.")
+    startingPrompt = input("Press Enter to Play! ")
+    currentNode = self.startingNode
+    prompt = True
+    while True:
+      for turnCounter in range(1, 3):
+        while prompt == True:
+          print("\nNumber of Marbles Remaining: " + str(currentNode.marbleCount) + "\n")
+          print("It's Player " + str(turnCounter) + "'s Turn!")
+          playerTurn = input("How many marbles would you like to pick up? ")
+          if int(playerTurn) > 3 or int(playerTurn) < 1:
+            print("\nInvalid Number. Choose 1, 2, or 3")
+          else:
+            prompt = False
+        for child in currentNode.childNodes:
+          if child.marbleCount == currentNode.marbleCount-int(playerTurn):
+            currentNode = child
+            break
+        if currentNode.marbleCount <= 0:
+          if turnCounter == 1:
+            print("\nGame Over! Player 1 Wins!")
+            return
+          else:
+            print("\nGame Over! Player 2 Wins!")
+            return
+        else:
+          prompt = True
+
+
+marbles = random.randint(10, 30)
+firstNode = TreeNode(15)
+start = Tree(firstNode)
+start.play_game()
