@@ -1,0 +1,212 @@
+# main.py
+import maze as mz
+import queue
+
+# construct maze
+# X is goal (located at (2, 0))
+# O is the player (we'll start at (0, 0))
+# * are cells with quicksand (higher cost to travel from this cell to another)
+mazeFormat = ""
+mazeFormat += "+---+---+---+\n"  
+mazeFormat += "|           |\n" # row0
+mazeFormat += "+   +---+   +\n"
+mazeFormat += "|     * |   |\n" # row1
+mazeFormat += "+---+   +   +\n"
+mazeFormat += "| X         |\n" # row2
+mazeFormat += "+---+---+---+\n"
+      # col0 col1 col2
+
+# row has 14 characters (including new line) so maze width is 14
+
+class Node:
+  def __init__(self, name, weight, location):
+    self.node = name
+    self.weight = weight
+    self.location = location
+    self.neighbours = {}
+  def add_neighbour(self, node):
+    self.neighbours[node] = node.weight
+  def __lt__(self, other):
+    return self.node < other.node
+
+PLAYER = 'O' # the piece that moves through the maze
+GOAL = 'X' # the target that the player is trying to reach
+QUICKSAND = "*" # quicksand pits that have a higher cost to travel out of
+
+class Maze:
+  def __init__(self, maze, width):
+    self.maze = maze
+    self.width = width
+  def print_maze(self, x = None, y = None):
+    if x == None and y == None:
+      print(self.maze)
+    else:
+      row_num = 2*x + 1
+      col_num = 4*y+2
+      prev_rows = self.maze[:self.width*row_num]
+      curr_row = self.maze[self.width*row_num:self.width*row_num+self.width]
+      post_rows = self.maze[self.width*row_num + self.width:]
+      updated_row = curr_row[:col_num] + PLAYER + curr_row[col_num+1:]
+      new_maze = prev_rows + updated_row + post_rows
+      print(new_maze)
+  def print_path(self, path):
+    print("Traversing Path...")
+    print(path)
+    for cell in path:
+      self.print_maze(int(cell[1]), int(cell[3]))
+    print("Path Length: " + str(len(path) - 1))
+
+class DFS:
+  def __init__(self):
+    self.graph = {}
+  def add_node(self, userNode):
+    self.graph[userNode.node] = userNode
+  def add_edge(self, node1, node2):
+    if node1.node in self.graph and node2.node in self.graph:
+      node1.add_neighbour(node2)
+      node2.add_neighbour(node1)
+    else:
+      print("One of your nodes is not inside the graph.")
+  def __str__(self):
+    s = ""
+    for i in self.graph:
+      s += str(self.graph[i].__str__()) + "\n\n"
+    return s
+  def dfs_iterative(self, startingNode, endNode):
+    visited = []
+    path = []
+    stack = [startingNode]
+    while len(stack) != 0:
+      x = stack.pop()
+      visited.append(x)
+      path.append(x.location)
+      if x == endNode:
+        return path
+      print(x.node)
+      for i in x.neighbours:
+        print(i.node)
+        if i not in visited:
+          stack.append(i)
+  def dfs_recursive(self, startingNode, visited):
+    visited.add(startingNode)
+    print(startingNode.node)
+    for x in startingNode.neighbours:
+      if x not in visited:
+        self.dfs_recursive(x, visited)
+        
+class BFS:
+  def __init__(self):
+    self.graph = {}
+  def add_node(self, userNode):
+    self.graph[userNode.node] = userNode
+  def add_edge(self, node1, node2):
+    if node1.node in self.graph and node2.node in self.graph:
+      node1.add_neighbour(node2)
+      node2.add_neighbour(node1)
+    else:
+      print("One of your nodes is not inside the graph.")
+  def __str__(self):
+    s = ""
+    for i in self.graph:
+      s += str(self.graph[i].__str__()) + "\n\n"
+    return s
+  def bfs(self, startingNode, endNode):
+    visited = {startingNode}
+    path = []
+    stack = [startingNode]
+    printList = []
+    while len(stack) != 0:
+      z = stack.pop(0)
+      printList.append(z.node)
+      path.append(z.location)
+      for i in z.neighbours:
+        if i not in visited:
+          visited.add(i)
+          if endNode not in visited:
+            stack.append(i)
+          else:
+            return path
+    #return print(*printList)
+    return path
+        
+class IDS:
+  def __init__(self, node):
+    self.initialNode = node
+  def recurse(self, maxDepth):
+    for i in range(maxDepth+1):
+      self.ids(i)
+  def ids(self, maxDepth, endNode):
+    visitedNodes = []
+    depth = 0
+    path = []
+    stack = []
+    stack.append((self.initialNode, 0))
+    visitedNodes.append(self.initialNode)
+    while len(stack) != 0:
+      node, depth2 = stack.pop()
+      path.append(node.location)
+      visitedNodes.append(node)
+      if endNode in visitedNodes:
+        return path
+      #print(node.node)
+      for child in node.neighbours:
+        #print(child)
+        #print(child.neighbours)
+        if child not in visitedNodes and depth2 < maxDepth:
+          stack.append((child, depth2+1))
+    return path
+        
+class UCS:
+  def __init__(self, rootNode):
+    self.root = rootNode
+  def ucs(self, endNode):
+    visited = []
+    path = []
+    Q = queue.PriorityQueue()
+    currentNode1 = self.root
+    Q.put((currentNode1.weight, currentNode1))
+    while not Q.empty():
+      currentWeight, currentNode = Q.get()
+      path.append(currentNode.location)
+      if currentNode not in visited:
+        visited.append(currentNode)
+        #print(str(currentNode.weight) + " costed: " + str(currentWeight))
+        if currentNode == endNode:
+          return path
+        for child in currentNode.neighbours:
+          childWeightSum = (child.weight+currentWeight)
+          Q.put((childWeightSum, child))
+          
+
+A = Node("A", 0, "(0,0)")
+B = Node("B", 1, "(0,1)")
+C = Node("C", 1, "(1,0)")
+D = Node("D", 2, "(0,2)")
+E = Node("E", 10, "(1,1)")
+F = Node("F", 3, "(1,2)")
+G = Node("G", 5, "(2,1)")
+H = Node("H", 4, "(2,2)")
+end = Node("X", -10, "(2,0)")
+
+A.add_neighbour(B)
+A.add_neighbour(C)
+B.add_neighbour(D)
+C.add_neighbour(E)
+D.add_neighbour(F)
+E.add_neighbour(G)
+F.add_neighbour(H)
+H.add_neighbour(G)
+G.add_neighbour(end)
+
+maze = Maze(mazeFormat, 14)
+maze.print_maze()
+
+dfs = DFS()
+bfs = BFS()
+ids = IDS(A)
+ucs = UCS(A)
+
+maze.print_path(dfs.dfs_iterative(A, end))
+#maze.print_path(bfs.bfs(A, end))
+#maze.print_path(ids.ids(4, end))
+#maze.print_path(ucs.ucs(end))
