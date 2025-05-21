@@ -1,0 +1,140 @@
+#main.py
+import random
+import math
+
+global minScore
+minScore = -10
+global maxScore
+maxScore = 10
+
+class TreeNode:
+  def __init__(self, sum_of_marbles, turnNum):
+    self.marbleCount = sum_of_marbles
+    self.playerTurn = turnNum
+    self.bestChild = None
+    self.nodeScore = 0
+    self.parentNode = None
+    self.childNodes = []
+  def add_childNode(self, node):
+    self.childNodes.append(node)
+  def set_bestChild(self):
+    for child in self.childNodes:
+      if child.marbleCount == 0 and self.playerTurn == True:
+        self.nodeScore = -10
+        self.bestChild = child
+        return
+      elif child.marbleCount == 0 and self.playerTurn == False:
+        self.nodeScore = 10
+        self.bestChild = child
+        return
+    bestChild = None
+    if self.playerTurn == True:
+      bestScore = -math.inf
+      for node in self.childNodes:
+        if node.nodeScore > bestScore:
+          bestChild = node
+          bestScore = node.nodeScore
+    elif self.playerTurn == False:
+      bestScore = math.inf
+      for node in self.childNodes:
+        if node.nodeScore < bestScore:
+          bestChild = node
+          bestScore = node.nodeScore
+    self.bestChild = bestChild
+    self.nodeScore = bestScore
+  def assignedSearch(self):
+    aiWinCounter = 0
+    playerWinCounter = 0
+    for child in self.childNodes:
+      if child.nodeScore == minScore:
+        aiWinCounter += 1
+      if child.nodeScore == maxScore:
+        playerWinCounter += 1
+    if aiWinCounter == 3:
+      self.nodeScore = minScore+1
+      minScore = self.nodeSCore
+    elif aiWinCounter == 2:
+      self.nodeScore = minScore+2
+      minScore = self.nodeScore
+    elif aiWinCounter == 1:
+      self.nodeScore = minScore+3
+      minScore = self.nodeScore
+    if playerWinCounter == 3:
+      self.nodeScore = maxScore-1
+      maxScore = self.nodeScore
+    elif playerWinCounter == 2:
+      self.nodeScore = maxScore-2
+      maxScore = self.nodeScore
+    elif playerWinCounter == 1:
+      self.nodeScore = maxScore-3
+      maxScore = self.nodeScore
+    if self.parentNode == None:
+      return
+  
+class Tree:
+  def __init__(self, rootNode):
+    self.startingNode = rootNode
+    self.listedNodes = {}
+    self.build_Tree(self.startingNode)
+    self.startingNode.set_bestChild()
+  def build_Tree(self, inputNode):
+    if inputNode.marbleCount <= 0:
+      return
+    possibleStates = []
+    for j in range(1, 4):
+      if j <= inputNode.marbleCount:
+        possibleStates.append(inputNode.marbleCount-j)
+    for i in possibleStates:
+      preNode = (str(i) + ", " + str(not inputNode.playerTurn))
+      if preNode in self.listedNodes:
+        inputNode.childNodes.append(self.listedNodes[preNode])
+      else:
+        child = TreeNode(i, not inputNode.playerTurn)
+        self.listedNodes[preNode] = child
+        inputNode.childNodes.append(child)
+    for child in inputNode.childNodes:
+      child.parentNode = inputNode
+      self.build_Tree(child)
+  def play_game(self):
+    print("Welcome to the Marble Game!")
+    print("In this game, you have a pile of X marbles and players must take turns picking up marbles.")
+    print("During your turn, you can pick up 1, 2, or 3 marbles.")
+    print("A player wins if the opponent doesn't have marbles to pick up.")
+    startingPrompt = input("Press Enter to Play! ")
+    currentNode = self.startingNode
+    prompt = True
+    while True:
+      while prompt == True:
+        print("\nNumber of Marbles Remaining: " + str(currentNode.marbleCount) + "\n")
+        print("It's your turn!")
+        playerTurn = input("How many marbles would you like to pick up? ")
+        if int(playerTurn) > 3 or int(playerTurn) < 1:
+          print("\nInvalid Number. Choose 1, 2, or 3")
+        else:
+          prompt = False
+      for child in currentNode.childNodes:
+        if child.marbleCount == currentNode.marbleCount-int(playerTurn):
+          currentNode = child
+          break
+      if currentNode.marbleCount <= 0:
+        print("\nGame Over! You Win!")
+        return
+      print("\nNumber of Marbles Remaining: " + str(currentNode.marbleCount) + "\n")
+      print("It's AI's Turn!")
+      if currentNode.bestChild == None:
+        currentNode.set_bestChild()
+      AImove = currentNode.marbleCount - currentNode.bestChild.marbleCount
+      print("AI Picked " + str(AImove) + " Marbles.")
+      for child in currentNode.childNodes:
+        if child.marbleCount == currentNode.marbleCount-AImove:
+          currentNode = child
+          break
+      if currentNode.marbleCount <= 0:
+        print("\nGame Over! The AI Wins!")
+        return
+      prompt = True
+      
+randomMarbles = random.randint(8, 8)
+start = TreeNode(randomMarbles, 1)
+game = Tree(start)
+game.play_game()
