@@ -1,0 +1,124 @@
+# main.py
+
+class TreeNode:
+  def __init__(self, playerCharacter, board):
+    self.board = board
+    self.character = playerCharacter
+    self.branches = []
+  def add_branch(self, node):
+    self.branches.append(node)
+  def print_board(self):
+    if self.board != []:
+      print("  0 1 2\n")
+      k = 0
+      for i in self.board:
+        print(str(k) + " " + str(" ".join(i)) + "\n")
+        k += 1
+      return
+  def check_win(self):
+    #Horizontal
+    for rowNum in range(3):
+      if self.board[rowNum][0] == self.board[rowNum][1] == self.board[rowNum][2] and self.board[rowNum][0] != "-":
+        return (self.board[rowNum][0], True, "Row")
+    #Vertical
+    for colNum in range(3):
+      if self.board[0][colNum] == self.board[1][colNum] == self.board[2][colNum] and self.board[0][colNum] != "-":
+        return (self.board[0][colNum], True, "Column")
+    #Diagnol
+    if self.board[0][0] == self.board[1][1] == self.board[2][2] and self.board[0][0] != "-":
+      return (self.board[0][0], True, "Diagnol Left")
+    elif self.board[0][2] == self.board[1][1] == self.board[2][0] and self.board[2][0] != "-":
+      return (self.board[2][0], True, "Diagnol Right")
+    #Draw
+    spaceNum = 0
+    for i in self.board:
+      for x in i:
+        if x != "-":
+          spaceNum += 1
+    if spaceNum == 9:
+      return ("Draw", True)
+    return ("Not Finished", False)
+    
+  """def alt_print(self):
+    #inputline[1 5 & 9] is where X or O should be (Columns)
+    #grid[0, 2, 4] are the rows
+    inputline = [" ", " ", " ", "|", " ", " ", " ", "|", " ", " ", " "]
+    borderline = ["-", "-", "-", "+", "-", "-", "-", "+", "-", "-", "-"]
+    for _ in range(2):
+      self.board.append("".join(inputline))
+      self.board.append("".join(borderline))
+    self.board.append("".join(inputline))
+    for _ in range(7):
+      print("\n")
+    for i in self.board:
+      print("                          " + str(i))"""
+  """def start(self, playerCharacter):
+    computerChar = ""
+    if playerCharacter == "X":
+      computerChar = "O"
+    elif playerCharacter == "O":
+      computerChar = "X"""
+
+class Tree:
+  def __init__(self, root):
+    self.rootNode = root
+    self.counter = 0
+    self.build_tree(self.rootNode)
+  def copy_board(self, board):
+    newBoard = []
+    for i in range(len(board)):
+      row = []
+      for j in range(len(board[i])):
+        row.append(board[i][j])
+      newBoard.append(row)
+    return newBoard
+  def build_tree(self, node):
+    if node.check_win()[1] == True:
+      return
+    childPlayer = ""
+    if node.character == "X":
+      childPlayer = "O"
+    else:
+      childPlayer = "X"
+    for i in range(len(node.board)):
+      for j in range(len(node.board[i])):
+        print("Past Nested")
+        if node.board[i][j] == "-":
+          copy = self.copy_board(node.board)
+          copy[i][j] = node.character
+          child = TreeNode(childPlayer, copy)
+          node.add_branch(child)
+    for child in node.branches:
+      print("Past Child")
+      self.build_tree(child)
+  def play_game(self):
+    print("Welcome to the Tic Tac Toe AI Game, where you can play Tic Tac Toe with AI. You will be player 'X' and the computer will be 'O'" )
+    input("To Start Press Enter")
+    current = self.rootNode
+    current.print_board()
+    #while current.check_win()[1] == False:
+      #current.print_board()
+    
+    
+start_board = [
+  ['-', '-', '-'],
+  ['-', '-', '-'],
+  ['-', '-', '-']
+]
+
+child_board = [
+  ['-', '-', '-'],
+  ['-', 'X', '-'],
+  ['-', '-', '-']
+]
+
+win_board = [
+  ['X', 'X', 'O'],
+  ['O', 'O', 'X'],
+  ['X', 'O', '-']
+]
+
+g = TreeNode("X", start_board)
+t = Tree(g)
+g.print_board()
+t.play_game()
